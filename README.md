@@ -1,3 +1,5 @@
+![GitHub Logo](/assets/images/Logo Amarelo Com Neon.png)
+
 # Asteroids-Copy © David, Francielly, Kougam, Leonardo, Richard - Universidade Católica de Santa Catarina Jaragua do Sul / 2017
 
 Um projeto WEB sobre desenvolvimento de polígonos com a replica e modificada do jogo Asteroids para fins totalmente educacionais, ou seja, sem fins lucrativos.
