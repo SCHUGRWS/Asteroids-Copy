@@ -1,3 +1,7 @@
 body {
 	background: #000000;
 }
+
+#page-content {
+	padding: 30px 0;
+}
