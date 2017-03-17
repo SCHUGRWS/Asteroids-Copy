@@ -5,3 +5,22 @@ body {
 #page-content {
 	padding: 30px 0;
 }
+
+#logo
+{
+
+}
+
+
+
+#circulo-play 
+{
+	background: url("../images/circulo-play.png") no-repeat center;
+	width: 408px;
+	height: 408px;
+	line-height: 408px;
+	display: block;
+	margin: 0 auto;
+	text-align: center;
+	padding-left: 35px;
+}
