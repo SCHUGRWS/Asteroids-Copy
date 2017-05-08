@@ -19,7 +19,7 @@ function preload() {
     
     game.stage.backgroundColor = '#000000';
     
-    game.load.image('nave', 'assets/images/Nave 100% Pronta.png');
+    game.load.image('nave', 'assets/images/Nave.png');
     game.load.image('tiro', 'assets/images/Tiro Risco.png');
     
 
@@ -107,12 +107,12 @@ function disparoNave () {
         if (tiro)
         {
             tiro.reset(nave.body.x+(nave.width/2), nave.body.y + 20);
-            tiro.lifespan = 2000;
-            tiro.width = widthCanvas*0.01;
-            tiro.height = widthCanvas*0.03;
+            tiro.lifespan = 4000;
+            tiro.width = widthCanvas*0.005;
+            tiro.height = widthCanvas*0.015;
             tiro.rotation = nave.rotation-0.0001;
             game.physics.arcade.velocityFromRotation(nave.rotation-1.5555, 400, tiro.body.velocity);
-            tiroTime = game.time.now + 300;
+            tiroTime = game.time.now + 200;
         }
     }
 
