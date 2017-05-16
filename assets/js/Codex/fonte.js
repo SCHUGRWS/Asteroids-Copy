@@ -5,6 +5,12 @@ var assets=[
     {"tipo":"image","nome":"meteoroGrande","asset":"assets/images/Meteoro Branco Grande.png"},
     {"tipo":"image","nome":"meteoroMedio","asset":"assets/images/Meteoro Branco Grande.png"},
     {"tipo":"image","nome":"meteoroPequeno","asset":"assets/images/Meteoro Branco Grande.png"},
+    {"tipo":"image","nome":"explosaoMeteoro","asset":"assets/images/pixel1.png"},
+    {"tipo":"image","nome":"somFundo","asset":"assets/images/circulo-play.png"},
+    {"tipo":"sound","nome":"somTiro1","asset":"assets/sounds/laser.wav"},
+    {"tipo":"sound","nome":"somTiro2","asset":"assets/sounds/laser2.wav"},
+    {"tipo":"sound","nome":"somExplosao1","asset":"assets/sounds/explosao1.wav"},
+    {"tipo":"sound","nome":"somExplosao2","asset":"assets/sounds/explosao2.wav"},
 ]
 var arrayMeteoros=["meteoroGrande","meteoroMedio","meteoroPequeno"];
 
@@ -15,18 +21,38 @@ var heightCanvas = document.getElementById('canvasGame').offsetHeight;
 
 heightCanvas=window.screen.height*0.87;
 
+var score = 0;
+
+var scoreFase = 2000;
+
+var mensagemFase;
+
+var meteorosPequenosDestruidos = 0;
+
+var vidas = 3;
+
+var vida = [];
+
+var somExplosao;
+var somTiro;
+
 var game = new Phaser.Game(widthCanvas, heightCanvas, Phaser.AUTO, 'canvasGame', { preload: preload, create: create, update: update });
 //game.x = 200;
 preload();
 create();
 
 var nave;
+
 var cursors;
 
 var tiro;
 var tiros;
 var tiroTime = game.time.now;
 var tiroTime=0;
+
+var explosaoMeteoro;
+
+var mensgemScore;
 
 function preload() {
 
@@ -51,9 +77,17 @@ function create() {
         tiroTime = game.time.now + 0.001;
     }
     
+    var style = { font: "bold 36px Arial", fill: "#ffffff" };
+    
+    mensagemFase = game.add.text((widthCanvas*0.9)-200, 15, "teste"+score, style);
+
+        //  We'll set the bounds to be from x0, y100 and be 800px wide by 100px high
+    mensagemFase.setTextBounds(50, 15, 200, 100);
+    
     game.renderer.clearBeforeRender = false;
     game.renderer.roundPixels = true;
     game.physics.startSystem(Phaser.Physics.ARCADE);
+    
     nave = game.add.sprite(0,0,'nave');
     nave.width = widthCanvas*0.03;
     nave.height = widthCanvas*0.03;
@@ -62,6 +96,8 @@ function create() {
     nave.anchor.setTo(0.5, 0.5);
     
     game.physics.enable(nave, Phaser.Physics.ARCADE);
+    
+    carregaVidas();
     
     //  Our ships tiros
     tiros = game.add.group();
@@ -84,7 +120,7 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
     game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
     
-    criarMeteoro(undefined,undefined,arrayMeteoros[0],5,undefined,undefined);
+    criarMeteoro(undefined,undefined,arrayMeteoros[0],8,undefined,undefined);
     //criarMeteoro(undefined,undefined,arrayMeteoros[2],10,50,50);
     //criarMeteoro(undefined,undefined,arrayMeteoros[3],10,25,25);
     
@@ -98,7 +134,7 @@ function update () {
     //nave.rotation = game.physics.arcade.angleToPointer(nave)+1.55;
     if (cursors.up.isDown)
     {
-        game.physics.arcade.accelerationFromRotation(nave.rotation-1.55, 200, nave.body.acceleration);
+        game.physics.arcade.accelerationFromRotation(nave.rotation-1.55, 400, nave.body.acceleration);
     }
     else
     {
@@ -127,16 +163,20 @@ function update () {
     
     meteoros.forEachExists(screenWrap, this);
     
+    game.physics.arcade.overlap(nave, meteoros, colisaoMeteroro, null, this);
+    
     game.physics.arcade.overlap(tiros, meteoros, colisaoMeteroro, null, this);
-    //game.physics.arcade.overlap(tiros, meteorosGrandes, colisaoMeteroro, null, this);
+    
     
     tiros.forEachExists(screenWrap, this);
+    
+    mensagemFase.setText(""+score);
 }
 
 
 function disparoNave () {
 
-    if(parseFloat(game.time.now)>tiroTime){
+    if((parseFloat(game.time.now)>tiroTime)&&(!morto)){
         tiro = tiros.getFirstExists(false);
         if (tiro)
         {
@@ -146,6 +186,8 @@ function disparoNave () {
             tiro.height = widthCanvas*0.03;
             tiro.rotation = nave.rotation-0.0001;
             game.physics.arcade.velocityFromRotation(nave.rotation-1.5555, 400, tiro.body.velocity);
+            somTiro = game.add.audio('somTiro2');
+            somTiro.play();
             tiroTime = game.time.now + 300;
         }
     }
@@ -220,14 +262,31 @@ function screenWrap (sprite) {
 }
 
 function colisaoMeteroro (objeto, meteoro) {
-    console.debug(meteoro.key);
-    
     objeto.kill();
+    
+    console.log(objeto.key);
+    
+    if(objeto.key=="nave" && objeto.key!="tiro"){
+        vidas=vidas-1;
+        calculaVida();
+        morto=true;
+        if(vidas >0){
+            game.time.events.add(Phaser.Timer.SECOND * 3, restauraNave, this);
+        }
+        if(vidas==0){
+            var style = { font: "bold 36px Arial", fill: "#ffffff" };
+    
+            var mensagemGameOver = game.add.text(((widthCanvas/2)-100), ((heightCanvas/2)-20), "GAME OVER", style);
+        }
+    }
     
     dadosMeteoro=meteoro;
     
     meteoro.kill();
     
+    somExplosao = game.add.audio('somExplosao2');
+    somExplosao.play();
+    explosaoMeteoroDestruidos(meteoro);
     dividirMeteoro(meteoro);
 }
 
@@ -271,18 +330,84 @@ function loadAssets(asset){
     if (asset.tipo=="image"){
         game.load.image(asset.nome, asset.asset);
     }
+    if (asset.tipo=="sound"){
+        game.load.audio(asset.nome, asset.asset);
+    }
     
 }
 
 function dividirMeteoro(meteoro){
     if(meteoro.key==arrayMeteoros[0]){
         criarMeteoro(meteoro.x,meteoro.y,arrayMeteoros[1],2,50,50);
+        score = score + 10;
     }
     if(meteoro.key==arrayMeteoros[1]){
         criarMeteoro(meteoro.x,meteoro.y,arrayMeteoros[2],3,25,25);
+        score = score + 25;
+    }
+    if(meteoro.key==arrayMeteoros[2]){
+        score = score + 50;
+        meteorosPequenosDestruidos=meteorosPequenosDestruidos+1;
+        if(meteorosPequenosDestruidos >= 6){
+            meteorosPequenosDestruidos = 0;
+            criarMeteoro(undefined,undefined,arrayMeteoros[0],1,undefined,undefined);
+        }
     }
 }
 
+function explosaoMeteoroDestruidos(meteoro){
+    explosaoMeteoro = game.add.emitter(meteoro.x,meteoro.y,10);
+   
+    explosaoMeteoro.makeParticles('explosaoMeteoro');
+    
+    //explosaoMeteoro.makeParticles('somFundo');
+    
+    //explosaoMeteoro.width=1000;
+    //explosaoMeteoro.height=1000;
+    
+    explosaoMeteoro.setRotation(0,0);
+    explosaoMeteoro.setAlpha(0.2,0.4);
+    explosaoMeteoro.gravity = 0;
+    
+    explosaoMeteoro.hash.forEach(loadEmitter, this);
+    
+    explosaoMeteoro.start(false,1500,0.001,10);
+    
+    
+    
+}
+
+function loadEmitter(emmiter){
+    
+}
+
+function carregaVidas(){
+    var i = 0;
+    var distancia=20;
+    
+    for(i=0;i<vidas;i++){
+        vida[i] = game.add.sprite(0,0,'nave');
+        vida[i].width = widthCanvas*0.03;
+        vida[i].height = widthCanvas*0.03;
+        vida[i].position.x = distancia;
+        vida[i].position.y = 15;
+        distancia = distancia+45;
+    }
+}
+
+function calculaVida(){
+    if(vidas<3){
+        vida[vidas].visible=false;
+    }
+    if(vidas > 0){
+        vida[vidas-1].visible=true;
+    }
+}
+
+function restauraNave(){
+    nave.reset(widthCanvas/2, heightCanvas/2);
+    morto=false;
+}
 
 function render () {
 
