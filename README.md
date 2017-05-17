@@ -1,4 +1,4 @@
-![GitHub Logo](/assets/images/Logo Amarelo Com Neon.png)
+![GitHub Logo](/assets/images/logo.png)
 
 # Asteroids-Copy © David, Francielly, Kougam, Leonardo, Richard - Universidade Católica de Santa Catarina Jaragua do Sul / 2017
 
