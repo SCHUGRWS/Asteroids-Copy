@@ -1,8 +1,8 @@
-![GitHub Logo](/assets/images/Logo Amarelo Com Neon.png)
+![GitHub Logo](/assets/images/logo.png)
 
 # Asteroids-Copy © David, Francielly, Kougam, Leonardo, Richard - Universidade Católica de Santa Catarina Jaragua do Sul / 2017
 
-Um projeto WEB sobre desenvolvimento de polígonos com a replica e modificada do jogo Asteroids para fins totalmente educacionais, ou seja, sem fins lucrativos.
+Um projeto WEB sobre desenvolvimento de polígonos com a replica e modificada do jogo Asteroids, tendo todos os direitos originais reservados a Atari, para fins totalmente educacionais, ou seja, sem fins lucrativos.
 
 O jogo vai ser uma representação em neon do classico Asterois desenvolvido com HTML5, CSS3, JS com framework Phaser para desenvolvimento de jogos e demais aplicativos de desenvolvimento grafico da coleção Adobe.
 

@@ -33,6 +33,8 @@ var vidas = 3;
 
 var vida = [];
 
+var morto=false;
+
 var somExplosao;
 var somTiro;
 
