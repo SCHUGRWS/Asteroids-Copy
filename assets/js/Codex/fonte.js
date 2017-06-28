@@ -7,6 +7,7 @@ var assets=[
     {"tipo":"image","nome":"meteoroPequeno","asset":"assets/images/Meteoro Branco Grande.png"},
     {"tipo":"image","nome":"explosaoMeteoro","asset":"assets/images/pixel1.png"},
     {"tipo":"image","nome":"somFundo","asset":"assets/images/circulo-play.png"},
+    {"tipo":"image","nome":"reset","asset":"assets/images/reset.png"},
     {"tipo":"sound","nome":"somTiro1","asset":"assets/sounds/laser.wav"},
     {"tipo":"sound","nome":"somTiro2","asset":"assets/sounds/laser2.wav"},
     {"tipo":"sound","nome":"somExplosao1","asset":"assets/sounds/explosao1.wav"},
@@ -29,6 +30,8 @@ var mensagemFase;
 
 var meteorosPequenosDestruidos = 0;
 
+var mensagemGameOver;
+
 var vidas = 3;
 
 var vida = [];
@@ -44,6 +47,7 @@ preload();
 create();
 
 var nave;
+var reset;
 
 var cursors;
 
@@ -278,7 +282,14 @@ function colisaoMeteroro (objeto, meteoro) {
         if(vidas==0){
             var style = { font: "bold 36px Arial", fill: "#ffffff" };
     
-            var mensagemGameOver = game.add.text(((widthCanvas/2)-100), ((heightCanvas/2)-20), "GAME OVER", style);
+            mensagemGameOver = game.add.text(((widthCanvas/2)-100), ((heightCanvas/2)-100), "GAME OVER", style);
+            reset = game.add.sprite(0,0,'reset');
+            reset.width = widthCanvas*0.15;
+            reset.height = heightCanvas*0.1;
+            reset.position.x = (widthCanvas/2)-90;
+            reset.position.y = (heightCanvas/2)-20;
+            reset.inputEnabled = true;
+            reset.events.onInputDown.add(resetar, this);
         }
     }
     
@@ -409,6 +420,17 @@ function calculaVida(){
 function restauraNave(){
     nave.reset(widthCanvas/2, heightCanvas/2);
     morto=false;
+}
+
+function resetar(){
+    vidas = 3;
+    carregaVidas();
+    
+    reset.kill();
+    mensagemGameOver.kill();
+    score = 0;
+    
+    restauraNave();
 }
 
 function render () {
