@@ -17,10 +17,14 @@ var arrayMeteoros=["meteoroGrande","meteoroMedio","meteoroPequeno"];
 
 var arrayCores=["FF00A5","23FF0F","FFBB00","FF0015","FFFF00","FF0000","D4FF02","FF00D8","00F6FF","54FF00","33FF00","0800FF","F600FF","FF6100","FF5400"];
 
-var widthCanvas = document.getElementById('canvasGame').offsetWidth;
-var heightCanvas = document.getElementById('canvasGame').offsetHeight; 
+var widthCanvas;
+var heightCanvas;
 
-heightCanvas=window.screen.height*0.87;
+widthCanvas = document.getElementById('canvasGame').offsetWidth;
+    heightCanvas = document.getElementById('canvasGame').offsetHeight; 
+
+    heightCanvas=window.screen.height*0.87;
+    
 
 var score = 0;
 
@@ -41,10 +45,7 @@ var morto=false;
 var somExplosao;
 var somTiro;
 
-var game = new Phaser.Game(widthCanvas, heightCanvas, Phaser.AUTO, 'canvasGame', { preload: preload, create: create, update: update });
-//game.x = 200;
-preload();
-create();
+var game;
 
 var nave;
 var reset;
@@ -53,12 +54,17 @@ var cursors;
 
 var tiro;
 var tiros;
-var tiroTime = game.time.now;
+var tiroTime;
 var tiroTime=0;
 
 var explosaoMeteoro;
 
 var mensgemScore;
+
+game = new Phaser.Game(widthCanvas, heightCanvas, Phaser.AUTO, 'canvasGame', { preload: preload, create: create, update: update });
+
+preload();
+    create();
 
 function preload() {
 
@@ -72,12 +78,18 @@ function preload() {
 
 }
 
+function playGameSchug() {
+    document.getElementById('page-content').remove();
+    game.paused=false;
+}
 
 function create() {
     
     //var fundo = game.add.sprite(0,0,'fundo');
     //fundo.width = widthCanvas*0.99;
     //fundo.height = heightCanvas;
+    
+    tiroTime = game.time.now
     
     if(!(parseFloat(game.time.now)>tiroTime)){
         tiroTime = game.time.now + 0.001;
@@ -129,6 +141,8 @@ function create() {
     criarMeteoro(undefined,undefined,arrayMeteoros[0],8,undefined,undefined);
     //criarMeteoro(undefined,undefined,arrayMeteoros[2],10,50,50);
     //criarMeteoro(undefined,undefined,arrayMeteoros[3],10,25,25);
+    
+    game.paused = true;
     
     //nave.rotation = 90;
 
